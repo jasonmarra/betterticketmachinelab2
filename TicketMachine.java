@@ -17,8 +17,10 @@ public class TicketMachine
     private int balance;
     // The total amount of money collected by this machine.
     private int total;
+    private int discountPrice;
+    private boolean discountSelected;
 
-    /**
+  /**
      * Create a machine that issues tickets of the given price.
      */
     public TicketMachine(int cost)
@@ -26,65 +28,109 @@ public class TicketMachine
         price = cost;
         balance = 0;
         total = 0;
+        discountPrice=cost/2;
+        discountSelected=false;
     }
-
-    /**
-     * @Return The price of a ticket.
+    
+  public void affordable(int budget)
+     {
+        if(price>budget)
+        {
+            System.out.println("the price of a ticket is:" + budget);
+             System.out.println("Too expensive.Your budget is:" + price);
+        }
+        else
+        {
+            System.out.println("Just right");
+          
+        }  
+        }
+    
+  public int emptyMachine()
+  {
+        int amountAfterEmpty=balance;
+        balance=0; 
+        return amountAfterEmpty;
+  }
+    
+  /**
+    * @Return The price of a ticket.
      */
     public int getPrice()
     {
         return price;
     }
 
-    /**
-     * Return The amount of money already inserted for the next ticket.
-     */
-    public int getBalance()
-    {
+  /**
+  * Return The amount of money already inserted for the next ticket.
+  */
+  public int getBalance()
+     {
         return balance;
     }
-
-    /**
-     * Receive an amount of money from a customer.
-     * Check that the amount is sensible.
-     */
-    public void insertMoney(int amount)
-    {
-        if(amount > 0) {
-            balance = balance + amount;
-        }
-        else {
-            System.out.println("Use a positive amount rather than: " + amount);
-        }
+    
+  public void selectDiscount()
+  {      
+      discountSelected=true;
+      
     }
 
-    /**
+  private int getCurrentPrice(){
+        if (discountSelected)
+        {
+            return discountPrice;
+        }
+        else
+        {
+            return price;
+        }
+    }
+    
+   /**
+  * Receive an amount of money from a customer.
+  * Check that the amount is sensible.
+  */
+  public void insertMoney(int amount)
+  {
+        if(amount == 0) { 
+            System.out.println("Use a positive amount rather than: " + amount);
+        }
+        else {
+            balance = balance + amount;
+        }
+   }
+    
+  /**
      * Print a ticket if enough money has been inserted, and
      * reduce the current balance by the ticket price. Print
      * an error message if more money is required.
      */
     public void printTicket()
-    {
-        if(balance >= price) {
-            // Simulate the printing of a ticket.
+  {
+        //if(amountLeftToPay<=0 {
+        int currentPrice= getCurrentPrice();
+        int amountLeftToPay= currentPrice - balance;
+        // Simulate the printing of a ticket.
+        if(amountLeftToPay<=0){
             System.out.println("##################");
             System.out.println("# The BlueJ Line");
             System.out.println("# Ticket");
-            System.out.println("# " + price + " cents.");
+            System.out.println("# " + currentPrice + " cents.");
             System.out.println("##################");
             System.out.println();
 
             // Update the total collected with the price.
-            total = total + price;
+           total = total + currentPrice;
             // Reduce the balance by the price.
-            balance = balance - price;
+            balance = balance - currentPrice;
+            discountSelected = false;
         }
-        else {
-            System.out.printf("You must insert at least %d more cents.%n",
-                              price - balance);
+        
+        else{
+            System.out.printf("You must insert at least %d cents %n",amountLeftToPay);
         }
     }
-
+    
     /**
      * Return the money in the balance.
      * The balance is cleared.
@@ -96,4 +142,4 @@ public class TicketMachine
         balance = 0;
         return amountToRefund;
     }
-}
+}    
